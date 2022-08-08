@@ -24,7 +24,7 @@ LABEL org.label-schema.docker.cmd="docker run -dit --name mirror -p 80:80 --moun
 ENV user=mirror
 
 RUN apk update                                               && \
-    apk add --no-cache openjdk8-jre dcron nss supervisor     && \
+    apk add --no-cache openjdk11-jre dcron nss supervisor     && \
     addgroup -S $user                                        && \
     adduser -S $user -G $user                                && \
     mkdir -p /tmp/nvd                                        && \
@@ -33,10 +33,9 @@ RUN apk update                                               && \
     rm -v /usr/local/apache2/htdocs/index.html
 
 COPY ["/src/docker/conf/supervisord.conf", "/etc/supervisor/conf.d/supervisord.conf"]
-COPY ["/src/docker/scripts/mirror.sh", "/mirror.sh"]
-COPY ["/src/docker/crontab/mirror", "/etc/crontabs/mirror"]
 COPY ["/src/docker/conf/mirror.conf", "/usr/local/apache2/conf"]
 COPY ["/target/nist-data-mirror.jar", "/usr/local/bin/"]
+COPY ["/target/docs/*", "/usr/local/apache2/htdocs/"]
 
 EXPOSE 80/tcp
 
